@@ -3,6 +3,7 @@ import { ResultOk, ResultFail, ResultOK, ResultFAIL } from 'node-result';
 
 import { CarrierService, CarrierServicesCreate } from './types/carrier_service';
 import { ScriptTag, ScriptTagCreate, ScriptTagId } from './types/script_tag';
+import { WebHookId, WebHookCreate } from './types/webhook';
 
 export class Shopify {
   private readonly instance: AxiosInstance;
@@ -78,6 +79,42 @@ export class Shopify {
     try {
       await this.instance.delete(`/admin/api/2020-10/script_tags/${id}.json`);
       return ResultOk(null);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async getWebHooks() {
+    try {
+      const {
+        data: { webhooks },
+      } = await this.instance.get('/admin/api/2020-10/webhooks.json');
+      return ResultOk(webhooks);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async getWebHook(id: WebHookId) {
+    try {
+      const {
+        data: { webhook },
+      } = await this.instance.get(`/admin/api/2019-10/webhooks/${id}.json`);
+      return ResultOk(webhook);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async createWebHook(webHookCreate: WebHookCreate) {
+    try {
+      const payload = {
+        webhook: webHookCreate,
+      };
+      const {
+        data: { webhook },
+      } = await this.instance.post('/admin/api/2020-10/webhooks.json', payload);
+      return ResultOk(webhook);
     } catch (error) {
       return ResultFail(error);
     }
