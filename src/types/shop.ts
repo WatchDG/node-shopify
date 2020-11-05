@@ -1,0 +1,33 @@
+export type ShopId = number;
+type ShopName = string;
+type ShopEmail = string;
+type ShopDomain = string;
+type ShopProvince = string;
+type ShopCountry = string;
+type ShopAddress1 = string;
+type ShopZip = string;
+type ShopCity = string;
+type ShopPhone = string;
+type ShopLatitude = number;
+type ShopLongitude = number;
+type ShopPrimaryLocale = string;
+type ShopCreatedAt = string;
+type ShopUpdatedAt = string;
+
+export type Shop = {
+  id: ShopId;
+  name: ShopName;
+  email: ShopEmail;
+  domain: ShopDomain;
+  province: ShopProvince;
+  country: ShopCountry;
+  address1: ShopAddress1;
+  zip: ShopZip;
+  city: ShopCity;
+  phone: ShopPhone;
+  latitude: ShopLatitude;
+  longitude: ShopLongitude;
+  primary_locale: ShopPrimaryLocale;
+  created_at: ShopCreatedAt;
+  updated_at: ShopUpdatedAt;
+};

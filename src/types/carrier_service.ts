@@ -1,25 +1,25 @@
-export type CarrierServicesId = number;
-export type CarrierServicesName = string;
-export type CarrierServicesCallbackUrl = string;
-export type CarrierServicesServiceDiscovery = boolean;
-export type CarrierServicesActive = boolean;
+export type CarrierServiceId = number;
+export type CarrierServiceName = string;
+export type CarrierServiceCallbackUrl = string;
+export type CarrierServiceServiceDiscovery = boolean;
+export type CarrierServiceActive = boolean;
 export type CarrierServiceType = 'api';
 export type CarrierServiceFormat = 'json';
 export type CarrierServiceAdminGraphqlApiId = string;
 
 export type CarrierServicesCreate = {
-  name: CarrierServicesName;
-  callback_url: CarrierServicesCallbackUrl;
-  service_discovery: CarrierServicesServiceDiscovery;
+  name: CarrierServiceName;
+  callback_url: CarrierServiceCallbackUrl;
+  service_discovery: CarrierServiceServiceDiscovery;
 };
 
 export type CarrierService = {
-  id: CarrierServicesId;
-  name: CarrierServicesName;
-  active: CarrierServicesActive;
-  service_discovery: CarrierServicesServiceDiscovery;
+  id: CarrierServiceId;
+  name: CarrierServiceName;
+  active: CarrierServiceActive;
+  service_discovery: CarrierServiceServiceDiscovery;
   carrier_service_type: CarrierServiceType;
   admin_graphql_api_id: CarrierServiceAdminGraphqlApiId;
   format: CarrierServiceFormat;
-  callback_url: CarrierServicesCallbackUrl;
+  callback_url: CarrierServiceCallbackUrl;
 };

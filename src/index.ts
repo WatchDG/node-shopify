@@ -1,9 +1,10 @@
 import Axios, { AxiosInstance } from 'axios';
 import { ResultOk, ResultFail, ResultOK, ResultFAIL } from 'node-result';
 
-import { CarrierService, CarrierServicesCreate } from './types/carrier_service';
+import { CarrierServiceId, CarrierService, CarrierServicesCreate } from './types/carrier_service';
 import { ScriptTag, ScriptTagCreate, ScriptTagId } from './types/script_tag';
 import { WebHookId, WebHookCreate } from './types/webhook';
+import { Shop } from './types/shop';
 
 export class Shopify {
   private readonly instance: AxiosInstance;
@@ -34,6 +35,26 @@ export class Shopify {
         data: { carrier_service },
       } = await this.instance.post('/admin/api/2020-10/carrier_services.json', payload);
       return ResultOk(carrier_service);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async getCarrierService(id: CarrierServiceId): Promise<ResultOK<CarrierService> | ResultFAIL<Error>> {
+    try {
+      const {
+        data: { carrier_service },
+      } = await this.instance.get(`/admin/api/2020-10/carrier_services/${id}.json`);
+      return ResultOk(carrier_service);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async deleteCarrierService(id: CarrierServiceId): Promise<ResultOK<null> | ResultFAIL<Error>> {
+    try {
+      await this.instance.delete(`/admin/api/2020-10/carrier_services/${id}.json`);
+      return ResultOk(null);
     } catch (error) {
       return ResultFail(error);
     }
@@ -95,6 +116,20 @@ export class Shopify {
     }
   }
 
+  async createWebHook(webHookCreate: WebHookCreate) {
+    try {
+      const payload = {
+        webhook: webHookCreate,
+      };
+      const {
+        data: { webhook },
+      } = await this.instance.post('/admin/api/2020-10/webhooks.json', payload);
+      return ResultOk(webhook);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
   async getWebHook(id: WebHookId) {
     try {
       const {
@@ -106,15 +141,21 @@ export class Shopify {
     }
   }
 
-  async createWebHook(webHookCreate: WebHookCreate) {
+  async deleteWebHook(id: WebHookId): Promise<ResultOK<null> | ResultFAIL<Error>> {
     try {
-      const payload = {
-        webhook: webHookCreate,
-      };
+      await this.instance.delete(`/admin/api/2020-10/webhooks/${id}.json`);
+      return ResultOk(null);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async getShop(): Promise<ResultOK<Shop> | ResultFAIL<Error>> {
+    try {
       const {
-        data: { webhook },
-      } = await this.instance.post('/admin/api/2020-10/webhooks.json', payload);
-      return ResultOk(webhook);
+        data: { shop },
+      } = await this.instance.get('/admin/api/2020-10/shop.json ');
+      return ResultOk(shop);
     } catch (error) {
       return ResultFail(error);
     }
