@@ -5,6 +5,7 @@ import { CarrierServiceId, CarrierService, CarrierServicesCreate } from './types
 import { ScriptTag, ScriptTagCreate, ScriptTagId } from './types/script_tag';
 import { WebHookId, WebHookCreate } from './types/webhook';
 import { Shop } from './types/shop';
+import { OrderId, UpdateOrder } from './types/order';
 
 export class Shopify {
   private readonly instance: AxiosInstance;
@@ -156,6 +157,53 @@ export class Shopify {
         data: { shop },
       } = await this.instance.get('/admin/api/2020-10/shop.json ');
       return ResultOk(shop);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async getOrders(options = {}) {
+    try {
+      const {
+        data: { orders },
+      } = await this.instance.get('/admin/api/2020-10/orders.json?status=any');
+      return ResultOk(orders);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async getOrder(id: OrderId) {
+    try {
+      const url = `/admin/api/2020-10/orders/${id}.json`;
+      const {
+        data: { order },
+      } = await this.instance.get(url);
+      return ResultOk(order);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async updateOrder(id, updateData: UpdateOrder) {
+    try {
+      const order = Object.assign({ id }, updateData);
+      const payload = {
+        order,
+      };
+      const url = `/admin/api/2020-10/orders/${id}.json`;
+      await this.instance.put(url, payload);
+      return ResultOk(null);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async deleteOrder(id: OrderId) {
+    try {
+      const url = `/admin/api/2020-10/orders/${id}.json`;
+      await this.instance.delete(url);
+      return ResultOk(null);
     } catch (error) {
       return ResultFail(error);
     }
