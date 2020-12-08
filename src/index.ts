@@ -14,6 +14,17 @@ export class Shopify {
     this.instance = Axios.create({ baseURL, timeout, headers });
   }
 
+  async getShop(): Promise<ResultOK<Shop> | ResultFAIL<Error>> {
+    try {
+      const {
+        data: { shop },
+      } = await this.instance.get('/admin/api/2020-10/shop.json ');
+      return ResultOk(shop);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
   async getCarrierServices(): Promise<ResultOK<CarrierService[]> | ResultFAIL<Error>> {
     try {
       const {
@@ -146,17 +157,6 @@ export class Shopify {
     try {
       await this.instance.delete(`/admin/api/2020-10/webhooks/${id}.json`);
       return ResultOk(null);
-    } catch (error) {
-      return ResultFail(error);
-    }
-  }
-
-  async getShop(): Promise<ResultOK<Shop> | ResultFAIL<Error>> {
-    try {
-      const {
-        data: { shop },
-      } = await this.instance.get('/admin/api/2020-10/shop.json ');
-      return ResultOk(shop);
     } catch (error) {
       return ResultFail(error);
     }
