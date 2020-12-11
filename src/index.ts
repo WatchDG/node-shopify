@@ -5,7 +5,7 @@ import { CarrierServiceId, CarrierService, CarrierServicesCreate } from './types
 import { ScriptTag, ScriptTagCreate, ScriptTagId } from './types/script_tag';
 import { WebHookId, WebHookCreate } from './types/webhook';
 import { Shop } from './types/shop';
-import { OrderId, UpdateOrder } from './types/order';
+import { OrderId, UpdateOrder, OrderMetafieldId } from './types/order';
 
 export class Shopify {
   private readonly instance: AxiosInstance;
@@ -204,6 +204,42 @@ export class Shopify {
       const url = `/admin/api/2020-10/orders/${id}.json`;
       await this.instance.delete(url);
       return ResultOk(null);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async getOrderMetafields(id: OrderId) {
+    try {
+      const {
+        data: { metafields },
+      } = await this.instance.get(`/admin/orders/${id}/metafields.json`);
+      return ResultOk(metafields);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async getOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId) {
+    try {
+      const {
+        data: { metafield },
+      } = await this.instance.get(`/admin/orders/${orderId}/metafields/${metafieldId}.json`);
+      return ResultOk(metafield);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async updateOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId, updateOrderMetafield: object) {
+    try {
+      const payload = {
+        metafield: Object.assign({ id: metafieldId }, updateOrderMetafield),
+      };
+      const {
+        data: { metafield },
+      } = await this.instance.put(`/admin/orders/${orderId}/metafields/${metafieldId}.json`, payload);
+      return ResultOk(metafield);
     } catch (error) {
       return ResultFail(error);
     }
