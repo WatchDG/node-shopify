@@ -244,4 +244,13 @@ export class Shopify {
       return ResultFail(error);
     }
   }
+
+  async deleteOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId) {
+    try {
+      await this.instance.delete(`/admin/orders/${orderId}/metafields/${metafieldId}.json`);
+      return ResultOk(null);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
 }
