@@ -253,4 +253,67 @@ export class Shopify {
       return ResultFail(error);
     }
   }
+
+  async createCheckout(checkoutCreate: CheckoutCreate): Promise<ResultOK<Checkout> | ResultFAIL<Error>> {
+    try {
+      const payload = {
+        checkout: checkoutCreate,
+      };
+      const {
+        data: { checkout },
+      } = await this.instance.post('/admin/api/2020-10/checkouts.json', payload);
+      return ResultOk(checkout);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async getCheckout(checkoutToken: CheckoutToken): Promise<ResultOK<Checkout> | ResultFAIL<Error>> {
+    try {
+      const {
+        data: { checkout },
+      } = await this.instance.get(`/admin/api/2020-10/checkouts/${checkoutToken}.json`);
+      return ResultOk(checkout);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async getCheckoutShippingRates(
+    checkoutToken: CheckoutToken,
+  ): Promise<ResultOK<CheckoutShippingRates[]> | ResultFAIL<Error>> {
+    try {
+      const {
+        data: { shipping_rates },
+      } = await this.instance.get(`/admin/api/2020-10/checkouts/${checkoutToken}/shipping_rates.json`);
+      return ResultOk(shipping_rates);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async updateCheckout(checkoutToken: CheckoutToken, checkoutUpdate: CheckoutUpdate) {
+    try {
+      const payload = {
+        checkout: Object.assign(checkoutUpdate, { token: checkoutToken }),
+      };
+      const {
+        data: { checkout },
+      } = await this.instance.put(`/admin/api/2020-10/checkouts/${checkoutToken}.json`, payload);
+      return ResultOk(checkout);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async completeCheckout(checkoutToken: CheckoutToken) {
+    try {
+      const {
+        data: { checkout },
+      } = await this.instance.post(`/admin/api/2020-10/checkouts/${checkoutToken}/complete.json`);
+      return ResultOk(checkout);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
 }

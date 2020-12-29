@@ -20,6 +20,19 @@ export type UpdateOrderPhone = {
   phone: OrderPhone;
 };
 
-export type UpdateOrder = UpdateOrderTags | UpdateOrderNote | UpdateOrderEmail | UpdateOrderPhone;
+export type UpdateOrderShippingAddress = {
+  shipping_address: {
+    city?: string;
+    address1?: string;
+    address2?: string;
+  };
+};
+
+export type UpdateOrder =
+  | UpdateOrderTags
+  | UpdateOrderNote
+  | UpdateOrderEmail
+  | UpdateOrderPhone
+  | UpdateOrderShippingAddress;
 
 export type OrderMetafieldId = number;
