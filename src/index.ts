@@ -316,4 +316,26 @@ export class Shopify {
       return ResultFail(error);
     }
   }
+
+  async getProducts() {
+    try {
+      const {
+        data: { products },
+      } = await this.instance.get('/admin/api/2020-10/products.json');
+      return ResultOk(products);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
+
+  async getProductsCount(): Promise<ResultOK<number> | ResultFAIL<Error>> {
+    try {
+      const {
+        data: { count },
+      } = await this.instance.get('/admin/api/2020-10/products/count.json');
+      return ResultOk(count);
+    } catch (error) {
+      return ResultFail(error);
+    }
+  }
 }
