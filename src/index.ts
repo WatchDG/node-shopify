@@ -301,4 +301,56 @@ export class Shopify {
     } = (await this.instance.get<rT>(url)).unwrap();
     return ResultOk(count);
   }
+
+  @tryCatchWrapperAsync
+  async getProductListings() {
+    type rT = { product_listings: object[] };
+    const url = '/admin/api/2021-01/product_listings.json';
+    const {
+      data: { product_listings }
+    } = (await this.instance.get<rT>(url)).unwrap();
+    return ResultOk(product_listings);
+  }
+
+  @tryCatchWrapperAsync
+  async getProductListingIds() {
+    type rT = { product_ids: number[] };
+    const url = '/admin/api/2021-01/product_listings/product_ids.json';
+    const {
+      data: { product_ids }
+    } = (await this.instance.get<rT>(url)).unwrap();
+    return ResultOk(product_ids);
+  }
+
+  @tryCatchWrapperAsync
+  async createProductListing(productId: number) {
+    type rT = { product_listing: object };
+    const url = `/admin/api/2021-01/product_listings/${productId}.json`;
+    const payload = {
+      product_listing: {
+        product_id: productId
+      }
+    };
+    const {
+      data: { product_listing }
+    } = (await this.instance.put<rT>(url, payload)).unwrap();
+    return ResultOk(product_listing);
+  }
+
+  @tryCatchWrapperAsync
+  async getProductListing(productId: number) {
+    type rT = { product_listing: object };
+    const url = `/admin/api/2021-01/product_listings/${productId}.json`;
+    const {
+      data: { product_listing }
+    } = (await this.instance.get<rT>(url)).unwrap();
+    return ResultOk(product_listing);
+  }
+
+  @tryCatchWrapperAsync
+  async deleteProductListing(productId: number): Promise<Result<Error, null>> {
+    const url = `/admin/api/2021-01/product_listings/${productId}.json`;
+    (await this.instance.delete(url)).unwrap();
+    return ResultOk(null);
+  }
 }
