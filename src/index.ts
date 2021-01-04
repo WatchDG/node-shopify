@@ -1,4 +1,3 @@
-// import Axios, { AxiosInstance } from 'axios';
 import { ResultOk, ResultFail, ResultOK, ResultFAIL } from 'node-result';
 import { HttpInstance } from 'http-instance';
 
@@ -7,6 +6,7 @@ import { ScriptTag, ScriptTagCreate, ScriptTagId } from './types/script_tag';
 import { WebHookId, WebHookCreate } from './types/webhook';
 import { Shop } from './types/shop';
 import { OrderId, UpdateOrder, OrderMetafieldId } from './types/order';
+import { CheckoutCreate, CheckoutUpdate, CheckoutToken, Checkout, CheckoutShippingRates } from './types/checkout';
 
 export class Shopify {
   private readonly instance: HttpInstance;
