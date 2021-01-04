@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "moduleResolution": "node",
-    "target": "es6",
-    "lib": ["es6"],
+    "target": "es2020",
     "declaration": true,
     "sourceMap": false,
+    "experimentalDecorators": true,
     "rootDir": "src",
     "outDir": "lib"
   },
