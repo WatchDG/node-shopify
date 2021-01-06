@@ -7,6 +7,7 @@ import { WebHookId, WebHookCreate } from './types/webhook';
 import { Shop } from './types/shop';
 import { OrderId, UpdateOrder, OrderMetafieldId } from './types/order';
 import { CheckoutCreate, CheckoutUpdate, CheckoutToken, Checkout, CheckoutShippingRates } from './types/checkout';
+import { ProductId } from './types/product';
 
 export class Shopify {
   private readonly instance: HttpInstance;
@@ -15,6 +16,31 @@ export class Shopify {
     this.instance = new HttpInstance({
       baseUrl,
       timeout
+    });
+  }
+
+  @tryCatchWrapperAsync
+  async getApiToken(
+    appApiKey: string,
+    appSecret: string,
+    code: string
+  ): Promise<Result<Error, { accessToken: string; scope: string[] }>> {
+    type rT = {
+      access_token: string;
+      scope: string;
+    };
+    const url = '/admin/oauth/access_token';
+    const payload = {
+      client_id: appApiKey,
+      client_secret: appSecret,
+      code
+    };
+    const {
+      data: { access_token, scope }
+    } = (await this.instance.post<rT>(url, payload)).unwrap();
+    return ResultOk({
+      accessToken: access_token,
+      scope: scope.split(',')
     });
   }
 
@@ -323,7 +349,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async createProductListing(productId: number) {
+  async createProductListing(productId: ProductId) {
     type rT = { product_listing: object };
     const url = `/admin/api/2021-01/product_listings/${productId}.json`;
     const payload = {
@@ -338,7 +364,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getProductListing(productId: number) {
+  async getProductListing(productId: ProductId) {
     type rT = { product_listing: object };
     const url = `/admin/api/2021-01/product_listings/${productId}.json`;
     const {
@@ -348,7 +374,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async deleteProductListing(productId: number): Promise<Result<Error, null>> {
+  async deleteProductListing(productId: ProductId): Promise<Result<Error, null>> {
     const url = `/admin/api/2021-01/product_listings/${productId}.json`;
     (await this.instance.delete(url)).unwrap();
     return ResultOk(null);
