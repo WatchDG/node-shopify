@@ -5,7 +5,7 @@ import { CarrierServiceId, CarrierService, CarrierServicesCreate } from './types
 import { ScriptTag, ScriptTagCreate, ScriptTagId } from './types/script_tag';
 import { WebHook, WebHookId, CreateWebHook } from './types/webhook';
 import { Shop } from './types/shop';
-import { Order, OrderId, UpdateOrder,OrderMetafield, OrderMetafieldId, UpdateOrderMetafield } from './types/order';
+import { Order, OrderId, UpdateOrder, OrderMetafield, OrderMetafieldId, UpdateOrderMetafield } from './types/order';
 import { CreateCheckout, UpdateCheckout, CheckoutToken, Checkout, CheckoutShippingRates } from './types/checkout';
 import { ProductId, Product, CreateProduct, UpdateProduct, ProductListing, ProductListingId } from './types/product';
 
@@ -175,7 +175,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getOrders() : Promise<Result<Error, Order[]>> {
+  async getOrders(): Promise<Result<Error, Order[]>> {
     type rT = { orders: Order[] };
     const url = '/admin/api/2020-10/orders.json';
     const {
@@ -233,7 +233,11 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async updateOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId, updateOrderMetafield: UpdateOrderMetafield): Promise<Result<Error, OrderMetafield>> {
+  async updateOrderMetafield(
+    orderId: OrderId,
+    metafieldId: OrderMetafieldId,
+    updateOrderMetafield: UpdateOrderMetafield
+  ): Promise<Result<Error, OrderMetafield>> {
     type rT = { metafield: OrderMetafield };
     const url = `/admin/orders/${orderId}/metafields/${metafieldId}.json`;
     const payload = {
@@ -392,7 +396,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getProductListings(): Promise<Result<Error, ProductListing>> {
+  async getProductListings(): Promise<Result<Error, ProductListing[]>> {
     type rT = { product_listings: ProductListing[] };
     const url = '/admin/api/2021-01/product_listings.json';
     const {

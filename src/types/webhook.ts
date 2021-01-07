@@ -11,7 +11,7 @@ type WebHookAddress = string;
 type WebhookFormat = 'json' | 'xml';
 
 export type WebHook = {
-  id: WebHookId
+  id: WebHookId;
 };
 
 export type CreateWebHook = {
