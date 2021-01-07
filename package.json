@@ -26,7 +26,7 @@
     "lib/**/*"
   ],
   "dependencies": {
-    "http-instance": "^4.1.0",
+    "http-instance": "^5.0.0",
     "node-result": "^5.5.0"
   },
   "devDependencies": {

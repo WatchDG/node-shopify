@@ -15,12 +15,27 @@ export type CheckoutCreateLineItem = {
   variant_id: number;
   quantity: number;
 };
-export type CheckoutCreate = {
+export type CreateCheckout = {
   line_items?: CheckoutCreateLineItem[];
   email?: CheckoutEmail;
 };
 
-export type CheckoutUpdate = {
+export type CheckoutUpdateShippingAddress = {
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  company?: string;
+  address1?: string;
+  address2?: string;
+  city?: string;
+  province?: string;
+  province_code?: string;
+  country?: string;
+  country_code?: string;
+  zip?: string;
+};
+
+export type UpdateCheckout = {
   email?: CheckoutEmail;
-  shipping_address?: object;
+  shipping_address?: CheckoutUpdateShippingAddress;
 };

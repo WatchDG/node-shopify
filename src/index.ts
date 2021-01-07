@@ -6,8 +6,8 @@ import { ScriptTag, ScriptTagCreate, ScriptTagId } from './types/script_tag';
 import { WebHookId, WebHookCreate } from './types/webhook';
 import { Shop } from './types/shop';
 import { OrderId, UpdateOrder, OrderMetafieldId } from './types/order';
-import { CheckoutCreate, CheckoutUpdate, CheckoutToken, Checkout, CheckoutShippingRates } from './types/checkout';
-import { ProductId } from './types/product';
+import { CreateCheckout, UpdateCheckout, CheckoutToken, Checkout, CheckoutShippingRates } from './types/checkout';
+import { ProductId, Product, CreateProduct, UpdateProduct } from './types/product';
 
 export class Shopify {
   private readonly instance: HttpInstance;
@@ -253,7 +253,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async createCheckout(checkoutCreate: CheckoutCreate): Promise<Result<Error, Checkout>> {
+  async createCheckout(checkoutCreate: CreateCheckout): Promise<Result<Error, Checkout>> {
     type rT = { checkout: Checkout };
     const url = '/admin/api/2020-10/checkouts.json';
     const payload = {
@@ -286,7 +286,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async updateCheckout(checkoutToken: CheckoutToken, checkoutUpdate: CheckoutUpdate): Promise<Result<Error, Checkout>> {
+  async updateCheckout(checkoutToken: CheckoutToken, checkoutUpdate: UpdateCheckout): Promise<Result<Error, Checkout>> {
     type rT = { checkout: Checkout };
     const url = `/admin/api/2020-10/checkouts/${checkoutToken}.json`;
     const payload = {
@@ -308,6 +308,9 @@ export class Shopify {
     return ResultOk(checkout);
   }
 
+  /**
+   * get products
+   */
   @tryCatchWrapperAsync
   async getProducts() {
     type rT = { products: object[] };
@@ -318,6 +321,9 @@ export class Shopify {
     return ResultOk(products);
   }
 
+  /**
+   * get products count
+   */
   @tryCatchWrapperAsync
   async getProductsCount(): Promise<Result<Error, number>> {
     type rT = { count: number };
@@ -326,6 +332,63 @@ export class Shopify {
       data: { count }
     } = (await this.instance.get<rT>(url)).unwrap();
     return ResultOk(count);
+  }
+
+  /**
+   * get product by product id
+   * @param productId - product id
+   */
+  @tryCatchWrapperAsync
+  async getProduct(productId: ProductId): Promise<Result<Error, Product>> {
+    type rT = { product: Product };
+    const url = `/admin/api/2021-01/products/${productId}.json`;
+    const {
+      data: { product }
+    } = (await this.instance.get<rT>(url)).unwrap();
+    return ResultOk(product);
+  }
+
+  /**
+   * create new product
+   * @param createProduct - product create object
+   */
+  @tryCatchWrapperAsync
+  async createProduct(createProduct: CreateProduct) {
+    type rT = { product: Product };
+    const url = '/admin/api/2021-01/products.json';
+    const payload = { product: createProduct };
+    const {
+      data: { product }
+    } = (await this.instance.post<rT>(url, payload)).unwrap();
+    return ResultOk(product);
+  }
+
+  /**
+   * update product
+   * @param productId - product id
+   * @param updateProduct - product update object
+   */
+  @tryCatchWrapperAsync
+  async updateProduct(productId: ProductId, updateProduct: UpdateProduct) {
+    type rT = { product: Product };
+    const url = `/admin/api/2021-01/products/${productId}.json`;
+    const payload = { product: Object.assign({ id: productId }, updateProduct) };
+    const {
+      data: { product }
+    } = (await this.instance.post<rT>(url, payload)).unwrap();
+    return ResultOk(product);
+  }
+
+  /**
+   * delete product by product id
+   * @param productId - product id
+   */
+  @tryCatchWrapperAsync
+  async deleteProduct(productId: ProductId) {
+    type rT = {};
+    const url = `DELETE /admin/api/2021-01/products/${productId}.json`;
+    (await this.instance.delete<rT>(url)).unwrap();
+    return ResultOk(null);
   }
 
   @tryCatchWrapperAsync
