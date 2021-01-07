@@ -8,10 +8,14 @@ type WebHookTopic =
   | 'orders/updated'
   | 'orders/delete';
 type WebHookAddress = string;
-type WebHookFormat = 'json' | 'xml';
+type WebhookFormat = 'json' | 'xml';
 
-export type WebHookCreate = {
+export type WebHook = {
+  id: WebHookId
+};
+
+export type CreateWebHook = {
   topic: WebHookTopic;
   address: WebHookAddress;
-  format: WebHookFormat;
+  format: WebhookFormat;
 };

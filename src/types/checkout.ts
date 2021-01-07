@@ -9,7 +9,7 @@ export type Checkout = {
   email: CheckoutEmail | null;
 };
 
-export type CheckoutShippingRates = object;
+export type CheckoutShippingRates = Record<string, never>;
 
 export type CheckoutCreateLineItem = {
   variant_id: number;

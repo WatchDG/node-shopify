@@ -3,11 +3,11 @@ import { HttpInstance } from 'http-instance';
 
 import { CarrierServiceId, CarrierService, CarrierServicesCreate } from './types/carrier_service';
 import { ScriptTag, ScriptTagCreate, ScriptTagId } from './types/script_tag';
-import { WebHookId, WebHookCreate } from './types/webhook';
+import { WebHook, WebHookId, CreateWebHook } from './types/webhook';
 import { Shop } from './types/shop';
-import { OrderId, UpdateOrder, OrderMetafieldId } from './types/order';
+import { Order, OrderId, UpdateOrder,OrderMetafield, OrderMetafieldId, UpdateOrderMetafield } from './types/order';
 import { CreateCheckout, UpdateCheckout, CheckoutToken, Checkout, CheckoutShippingRates } from './types/checkout';
-import { ProductId, Product, CreateProduct, UpdateProduct } from './types/product';
+import { ProductId, Product, CreateProduct, UpdateProduct, ProductListing, ProductListingId } from './types/product';
 
 export class Shopify {
   private readonly instance: HttpInstance;
@@ -135,8 +135,8 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getWebHooks() {
-    type rT = { webhooks: object };
+  async getWebHooks(): Promise<Result<Error, WebHook[]>> {
+    type rT = { webhooks: WebHook[] };
     const url = '/admin/api/2020-10/webhooks.json';
     const {
       data: { webhooks }
@@ -145,8 +145,8 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async createWebHook(webHookCreate: WebHookCreate) {
-    type rT = { webhook: object };
+  async createWebHook(webHookCreate: CreateWebHook): Promise<Result<Error, WebHook>> {
+    type rT = { webhook: WebHook };
     const url = '/admin/api/2020-10/webhooks.json';
     const payload = {
       webhook: webHookCreate
@@ -158,8 +158,8 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getWebHook(id: WebHookId) {
-    type rT = { webhook: object };
+  async getWebHook(id: WebHookId): Promise<Result<Error, WebHook>> {
+    type rT = { webhook: WebHook };
     const url = `/admin/api/2019-10/webhooks/${id}.json`;
     const {
       data: { webhook }
@@ -175,8 +175,8 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getOrders(options = {}) {
-    type rT = { orders: object[] };
+  async getOrders() : Promise<Result<Error, Order[]>> {
+    type rT = { orders: Order[] };
     const url = '/admin/api/2020-10/orders.json';
     const {
       data: { orders }
@@ -185,8 +185,8 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getOrder(id: OrderId) {
-    type rT = { order: object };
+  async getOrder(id: OrderId): Promise<Result<Error, Order>> {
+    type rT = { order: Order };
     const url = `/admin/api/2020-10/orders/${id}.json`;
     const {
       data: { order }
@@ -195,7 +195,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async updateOrder(id, updateData: UpdateOrder) {
+  async updateOrder(id: OrderId, updateData: UpdateOrder): Promise<Result<Error, null>> {
     const url = `/admin/api/2020-10/orders/${id}.json`;
     const order = Object.assign({ id }, updateData);
     const payload = {
@@ -206,15 +206,15 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async deleteOrder(id: OrderId) {
+  async deleteOrder(id: OrderId): Promise<Result<Error, null>> {
     const url = `/admin/api/2020-10/orders/${id}.json`;
     (await this.instance.delete(url)).unwrap();
     return ResultOk(null);
   }
 
   @tryCatchWrapperAsync
-  async getOrderMetafields(id: OrderId) {
-    type rT = { metafields: object[] };
+  async getOrderMetafields(id: OrderId): Promise<Result<Error, OrderMetafield[]>> {
+    type rT = { metafields: OrderMetafield[] };
     const url = `/admin/orders/${id}/metafields.json`;
     const {
       data: { metafields }
@@ -223,8 +223,8 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId) {
-    type rT = { metafield: object };
+  async getOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId): Promise<Result<Error, OrderMetafield>> {
+    type rT = { metafield: OrderMetafield };
     const url = `/admin/orders/${orderId}/metafields/${metafieldId}.json`;
     const {
       data: { metafield }
@@ -233,8 +233,8 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async updateOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId, updateOrderMetafield: object) {
-    type rT = { metafield: object };
+  async updateOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId, updateOrderMetafield: UpdateOrderMetafield): Promise<Result<Error, OrderMetafield>> {
+    type rT = { metafield: OrderMetafield };
     const url = `/admin/orders/${orderId}/metafields/${metafieldId}.json`;
     const payload = {
       metafield: Object.assign({ id: metafieldId }, updateOrderMetafield)
@@ -246,7 +246,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async deleteOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId) {
+  async deleteOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId): Promise<Result<Error, null>> {
     const url = `/admin/orders/${orderId}/metafields/${metafieldId}.json`;
     (await this.instance.delete(url)).unwrap();
     return ResultOk(null);
@@ -312,8 +312,8 @@ export class Shopify {
    * get products
    */
   @tryCatchWrapperAsync
-  async getProducts() {
-    type rT = { products: object[] };
+  async getProducts(): Promise<Result<Error, Product[]>> {
+    type rT = { products: Product[] };
     const url = '/admin/api/2020-10/products.json';
     const {
       data: { products }
@@ -353,7 +353,7 @@ export class Shopify {
    * @param createProduct - product create object
    */
   @tryCatchWrapperAsync
-  async createProduct(createProduct: CreateProduct) {
+  async createProduct(createProduct: CreateProduct): Promise<Result<Error, Product>> {
     type rT = { product: Product };
     const url = '/admin/api/2021-01/products.json';
     const payload = { product: createProduct };
@@ -369,7 +369,7 @@ export class Shopify {
    * @param updateProduct - product update object
    */
   @tryCatchWrapperAsync
-  async updateProduct(productId: ProductId, updateProduct: UpdateProduct) {
+  async updateProduct(productId: ProductId, updateProduct: UpdateProduct): Promise<Result<Error, Product>> {
     type rT = { product: Product };
     const url = `/admin/api/2021-01/products/${productId}.json`;
     const payload = { product: Object.assign({ id: productId }, updateProduct) };
@@ -384,16 +384,16 @@ export class Shopify {
    * @param productId - product id
    */
   @tryCatchWrapperAsync
-  async deleteProduct(productId: ProductId) {
-    type rT = {};
+  async deleteProduct(productId: ProductId): Promise<Result<Error, null>> {
+    type rT = Record<string, never>;
     const url = `DELETE /admin/api/2021-01/products/${productId}.json`;
     (await this.instance.delete<rT>(url)).unwrap();
     return ResultOk(null);
   }
 
   @tryCatchWrapperAsync
-  async getProductListings() {
-    type rT = { product_listings: object[] };
+  async getProductListings(): Promise<Result<Error, ProductListing>> {
+    type rT = { product_listings: ProductListing[] };
     const url = '/admin/api/2021-01/product_listings.json';
     const {
       data: { product_listings }
@@ -402,8 +402,8 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getProductListingIds() {
-    type rT = { product_ids: number[] };
+  async getProductListingIds(): Promise<Result<Error, ProductListingId[]>> {
+    type rT = { product_ids: ProductListingId[] };
     const url = '/admin/api/2021-01/product_listings/product_ids.json';
     const {
       data: { product_ids }
@@ -412,8 +412,8 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async createProductListing(productId: ProductId) {
-    type rT = { product_listing: object };
+  async createProductListing(productId: ProductId): Promise<Result<Error, ProductListing>> {
+    type rT = { product_listing: ProductListing };
     const url = `/admin/api/2021-01/product_listings/${productId}.json`;
     const payload = {
       product_listing: {
@@ -427,8 +427,8 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getProductListing(productId: ProductId) {
-    type rT = { product_listing: object };
+  async getProductListing(productId: ProductId): Promise<Result<Error, ProductListing>> {
+    type rT = { product_listing: ProductListing };
     const url = `/admin/api/2021-01/product_listings/${productId}.json`;
     const {
       data: { product_listing }

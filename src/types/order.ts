@@ -4,6 +4,12 @@ export type OrderTags = string;
 export type OrderEmail = string;
 export type OrderPhone = string;
 
+export type Order = Record<string, never>;
+
+export type OrderMetafield = Record<string, never>;
+
+export type UpdateOrderMetafield = Record<string, never>;
+
 export type UpdateOrderTags = {
   tags: OrderTags;
 };

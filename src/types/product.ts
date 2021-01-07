@@ -20,3 +20,9 @@ export type CreateProduct = {
 export type UpdateProduct = {
   title?: ProductTitle;
 };
+
+
+export type ProductListingId = number;
+export type ProductListing = {
+  id: ProductListingId;
+};
