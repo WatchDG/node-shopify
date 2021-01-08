@@ -1,5 +1,5 @@
 export type WebHookId = number;
-type WebHookTopic =
+export type WebHookTopic =
   | 'orders/create'
   | 'orders/cancelled'
   | 'orders/fulfilled'
@@ -7,8 +7,8 @@ type WebHookTopic =
   | 'orders/partially_fulfilled'
   | 'orders/updated'
   | 'orders/delete';
-type WebHookAddress = string;
-type WebhookFormat = 'json' | 'xml';
+export type WebHookAddress = string;
+export type WebhookFormat = 'json' | 'xml';
 
 export type WebHook = {
   id: WebHookId;

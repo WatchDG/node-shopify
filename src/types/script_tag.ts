@@ -1,11 +1,11 @@
 export type ScriptTagId = number;
-type ScriptTagEvent = 'onload';
-type ScriptTagSrc = string;
-type ScriptTagCreatedAt = string;
-type ScriptTagUpdatedAt = string;
-type ScriptTagDisplayScope = 'all';
+export type ScriptTagEvent = 'onload';
+export type ScriptTagSrc = string;
+export type ScriptTagCreatedAt = string;
+export type ScriptTagUpdatedAt = string;
+export type ScriptTagDisplayScope = 'all';
 
-export type ScriptTagCreate = {
+export type CreateScriptTag = {
   event: ScriptTagEvent;
   src: ScriptTagSrc;
 };

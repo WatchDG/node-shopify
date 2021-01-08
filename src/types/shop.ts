@@ -1,18 +1,18 @@
 export type ShopId = number;
-type ShopName = string;
-type ShopEmail = string;
-type ShopDomain = string;
-type ShopProvince = string;
-type ShopCountry = string;
-type ShopAddress1 = string;
-type ShopZip = string;
-type ShopCity = string;
-type ShopPhone = string;
-type ShopLatitude = number;
-type ShopLongitude = number;
-type ShopPrimaryLocale = string;
-type ShopCreatedAt = string;
-type ShopUpdatedAt = string;
+export type ShopName = string;
+export type ShopEmail = string;
+export type ShopDomain = string;
+export type ShopProvince = string;
+export type ShopCountry = string;
+export type ShopAddress1 = string;
+export type ShopZip = string;
+export type ShopCity = string;
+export type ShopPhone = string;
+export type ShopLatitude = number;
+export type ShopLongitude = number;
+export type ShopPrimaryLocale = string;
+export type ShopCreatedAt = string;
+export type ShopUpdatedAt = string;
 
 export type Shop = {
   id: ShopId;

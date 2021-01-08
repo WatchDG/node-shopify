@@ -7,7 +7,7 @@ export type CarrierServiceType = 'api';
 export type CarrierServiceFormat = 'json';
 export type CarrierServiceAdminGraphqlApiId = string;
 
-export type CarrierServicesCreate = {
+export type CreateCarrierServices = {
   name: CarrierServiceName;
   callback_url: CarrierServiceCallbackUrl;
   service_discovery: CarrierServiceServiceDiscovery;

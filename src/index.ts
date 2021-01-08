@@ -1,13 +1,13 @@
 import { Result, ResultOk, tryCatchWrapperAsync } from 'node-result';
 import { HttpInstance } from 'http-instance';
 
-import { CarrierServiceId, CarrierService, CarrierServicesCreate } from './types/carrier_service';
-import { ScriptTag, ScriptTagCreate, ScriptTagId } from './types/script_tag';
+import { CarrierServiceId, CarrierService, CreateCarrierServices } from './types/carrier_service';
+import { ScriptTag, CreateScriptTag, ScriptTagId } from './types/script_tag';
 import { WebHook, WebHookId, CreateWebHook } from './types/webhook';
 import { Shop } from './types/shop';
 import { Order, OrderId, UpdateOrder, OrderMetafield, OrderMetafieldId, UpdateOrderMetafield } from './types/order';
 import { CreateCheckout, UpdateCheckout, CheckoutToken, Checkout, CheckoutShippingRates } from './types/checkout';
-import { ProductId, Product, CreateProduct, UpdateProduct, ProductListing, ProductListingId } from './types/product';
+import { ProductId, Product, CreateProduct, UpdateProduct, ProductListing } from './types/product';
 
 export class Shopify {
   private readonly instance: HttpInstance;
@@ -65,7 +65,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async createCarrierService(carrierServicesCreate: CarrierServicesCreate): Promise<Result<Error, CarrierService>> {
+  async createCarrierService(carrierServicesCreate: CreateCarrierServices): Promise<Result<Error, CarrierService>> {
     type rT = { carrier_service: CarrierService };
     const url = '/admin/api/2020-10/carrier_services.json';
     const payload = {
@@ -105,7 +105,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async createScriptTag(scriptTagCreate: ScriptTagCreate): Promise<Result<Error, ScriptTag>> {
+  async createScriptTag(scriptTagCreate: CreateScriptTag): Promise<Result<Error, ScriptTag>> {
     type rT = { script_tag: ScriptTag };
     const url = '/admin/api/2020-07/script_tags.json';
     const payload = {
@@ -406,8 +406,8 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getProductListingIds(): Promise<Result<Error, ProductListingId[]>> {
-    type rT = { product_ids: ProductListingId[] };
+  async getProductListingIds(): Promise<Result<Error, ProductId[]>> {
+    type rT = { product_ids: ProductId[] };
     const url = '/admin/api/2021-01/product_listings/product_ids.json';
     const {
       data: { product_ids }
