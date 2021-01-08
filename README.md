@@ -1,29 +1,21 @@
 # node-shopify
+module for creating Shopify API calls
 
-node-shopify
-
-## checkout
-
-### create checkout
-
-```ts
-import {Shopify} from 'node-shopify';
-
-(async () => {
-    const accessLogin = 'xxx';
-    const accessPassword = 'shpat_yyy';
-    const url = 'example.myshopify.com'
-    const shopify = new Shopify(`https://${accessLogin}:${accessToken}@${url}`, 5000);
-    //
-    const checkout = (await shopify.createCheckout({
-        email: 'user@example.com'
-    })).unwrap();
-})();
+## install dependencies
+```shell
+yarn install
+# or
+npm install 
 ```
 
-## product
+## build
+```shell
+yarn run build
+# or
+npm run build
+```
 
-### get products
+## example
 
 ```ts
 import {Shopify} from 'node-shopify';
@@ -35,20 +27,5 @@ import {Shopify} from 'node-shopify';
     const shopify = new Shopify(`https://${accessLogin}:${accessToken}@${url}`, 5000);
     //
     const products = (await shopify.getProducts()).unwrap();
-})();
-```
-
-### get products count
-
-```ts
-import {Shopify} from 'node-shopify';
-
-(async () => {
-    const accessLogin = 'xxx';
-    const accessPassword = 'shpat_yyy';
-    const url = 'example.myshopify.com'
-    const shopify = new Shopify(`https://${accessLogin}:${accessToken}@${url}`, 5000);
-    //
-    const productsCount = (await shopify.getProductsCount()).unwrap();
 })();
 ```
