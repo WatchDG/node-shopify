@@ -43,7 +43,6 @@ export type UpdateProduct = {
   title?: ProductTitle;
 };
 
-
 export type ProductListing = {
   product_id: ProductId;
   created_at: ProductCreatedAt;
