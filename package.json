@@ -12,24 +12,24 @@
     "email": "baranov@w3m.co"
   },
   "repository": "github:WatchDG/node-shopify",
+  "private": false,
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib/**/*"
   ],
-  "private": false,
   "scripts": {
     "fmt": "npx prettier --write \"src/**/*.ts\"",
     "lint": "eslint --ext=ts src",
     "build": "npx tsc",
     "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
-    "prepare": "npm run build",
+    "prepare": "npm run lint && npm run build",
     "postpublish": "pinst --enable"
   },
   "dependencies": {
-    "http-instance": "^5.0.0",
-    "node-result": "^5.6.0"
+    "http-instance": "^5.5.0",
+    "node-result": "^6.0.1"
   },
   "devDependencies": {
     "@types/node": "^14.14.2",
