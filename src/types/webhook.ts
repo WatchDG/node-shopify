@@ -8,14 +8,19 @@ export type WebHookTopic =
   | 'orders/updated'
   | 'orders/delete';
 export type WebHookAddress = string;
-export type WebhookFormat = 'json' | 'xml';
+export type WebHookFormat = 'json' | 'xml';
+export type WebHookCreatedAt = string;
+export type WebHookUpdatedAt = string;
+export type WebHookApiVersion = '2021-01';
 
 export type WebHook = {
   id: WebHookId;
+  address: WebHookAddress;
+  topic: WebHookTopic;
+  created_at: WebHookCreatedAt;
+  updated_at: WebHookUpdatedAt;
+  format: WebHookFormat;
+  api_version: WebHookApiVersion;
 };
 
-export type CreateWebHook = {
-  topic: WebHookTopic;
-  address: WebHookAddress;
-  format: WebhookFormat;
-};
+export type CreateWebHook = Pick<WebHook, 'topic' | 'address' | 'format'>;
