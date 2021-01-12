@@ -1,5 +1,6 @@
 export type CheckoutEmail = string;
 export type CheckoutToken = string;
+export type CheckoutWebUrl = string;
 export type Checkout = {
   created_at: string;
   currency: string;
@@ -7,6 +8,7 @@ export type Checkout = {
   customer_locale: string;
   token: CheckoutToken;
   email: CheckoutEmail | null;
+  web_url: CheckoutWebUrl;
 };
 
 export type CheckoutShippingRates = Record<string, never>;
