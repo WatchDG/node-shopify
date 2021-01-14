@@ -28,7 +28,7 @@
     "postpublish": "pinst --enable"
   },
   "dependencies": {
-    "http-instance": "^6.0.0",
+    "http-instance": "^6.0.2",
     "node-result": "^6.0.1"
   },
   "devDependencies": {
