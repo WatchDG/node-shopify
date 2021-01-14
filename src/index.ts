@@ -500,7 +500,7 @@ export class Shopify {
     const payload = {
       variant: createProductVariant
     };
-    const url = `/admin/api/2021-01/products/632910392/variants.json`;
+    const url = `/admin/api/2021-01/products/${productId}/variants.json`;
     const { data } = (await this.instance.post<rT>(url, payload)).unwrap();
     if (!data) {
       return ResultFail(new Error('Response without data.'));
