@@ -12,7 +12,9 @@ export type ProductPublishedAt = string;
 export type ProductStatus = 'active';
 export type ProductPublishedScope = 'global';
 
-export type ProductVariant = Record<string, never>;
+export type ProductVariant = {
+  id: ProductVariantId;
+};
 
 export type Product = {
   id: ProductId;
@@ -55,4 +57,9 @@ export type ProductListing = {
   available: boolean;
   tags: ProductTags;
   published_at: ProductPublishedAt;
+};
+
+export type CreateProductVariant = {
+  title?: string;
+  price?: string;
 };

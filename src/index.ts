@@ -7,7 +7,16 @@ import { WebHook, WebHookId, CreateWebHook } from './types/webhook';
 import { Shop } from './types/shop';
 import { Order, OrderId, UpdateOrder, OrderMetafield, OrderMetafieldId, UpdateOrderMetafield } from './types/order';
 import { CreateCheckout, UpdateCheckout, CheckoutToken, Checkout, CheckoutShippingRates } from './types/checkout';
-import { ProductId, Product, CreateProduct, UpdateProduct, ProductListing } from './types/product';
+import {
+  ProductId,
+  Product,
+  CreateProduct,
+  UpdateProduct,
+  ProductListing,
+  ProductVariantId,
+  CreateProductVariant,
+  ProductVariant
+} from './types/product';
 
 type ReturnAsync<T> = Promise<ResultOK<T> | ResultFAIL<Error>>;
 
@@ -478,6 +487,30 @@ export class Shopify {
   @tryCatchWrapperAsync
   async deleteProductListing(productId: ProductId): ReturnAsync<null> {
     const url = `/admin/api/2021-01/product_listings/${productId}.json`;
+    (await this.instance.delete(url)).unwrap();
+    return ResultOk(null);
+  }
+
+  @tryCatchWrapperAsync
+  async createProductVariant(
+    productId: ProductId,
+    createProductVariant: CreateProductVariant
+  ): ReturnAsync<ProductVariant> {
+    type rT = { variant: ProductVariant };
+    const payload = {
+      variant: createProductVariant
+    };
+    const url = `/admin/api/2021-01/products/632910392/variants.json`;
+    const { data } = (await this.instance.post<rT>(url, payload)).unwrap();
+    if (!data) {
+      return ResultFail(new Error('Response without data.'));
+    }
+    return ResultOk(data.variant);
+  }
+
+  @tryCatchWrapperAsync
+  async deleteProductVariant(productId: ProductId, productVariantId: ProductVariantId): ReturnAsync<null> {
+    const url = `/admin/api/2021-01/products/${productId}/variants/${productVariantId}.json`;
     (await this.instance.delete(url)).unwrap();
     return ResultOk(null);
   }
