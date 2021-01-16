@@ -1,4 +1,4 @@
-import { ResultOK, ResultFAIL, ResultOk, ResultFail, tryCatchWrapperAsync } from 'node-result';
+import { ResultOk, ResultFail, tryCatchWrapperAsync, ReturningResultAsync } from 'node-result';
 import { HttpInstance } from 'http-instance';
 
 import { CarrierServiceId, CarrierService, CreateCarrierServices } from './types/carrier_service';
@@ -18,8 +18,6 @@ import {
   ProductVariant
 } from './types/product';
 
-type ReturnAsync<T> = Promise<ResultOK<T> | ResultFAIL<Error>>;
-
 export class Shopify {
   private readonly instance: HttpInstance;
 
@@ -35,7 +33,7 @@ export class Shopify {
     appApiKey: string,
     appSecret: string,
     code: string
-  ): Promise<ResultOK<{ accessToken: string; scope: string[] }> | ResultFAIL<Error>> {
+  ): ReturningResultAsync<{ accessToken: string; scope: string[] }, Error> {
     type rT = {
       access_token: string;
       scope: string;
@@ -58,7 +56,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getShop(): Promise<ResultOK<Shop> | ResultFAIL<Error>> {
+  async getShop(): ReturningResultAsync<Shop, Error> {
     type rT = { shop: Shop };
     const url = '/admin/api/2020-10/shop.json';
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -69,7 +67,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getCarrierServices(): Promise<ResultOK<CarrierService[]> | ResultFAIL<Error>> {
+  async getCarrierServices(): ReturningResultAsync<CarrierService[], Error> {
     type rT = { carrier_services: CarrierService[] };
     const url = '/admin/api/2020-10/carrier_services.json';
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -81,12 +79,12 @@ export class Shopify {
 
   @tryCatchWrapperAsync
   async createCarrierService(
-    carrierServicesCreate: CreateCarrierServices
-  ): Promise<ResultOK<CarrierService> | ResultFAIL<Error>> {
+    createCarrierServices: CreateCarrierServices
+  ): ReturningResultAsync<CarrierService, Error> {
     type rT = { carrier_service: CarrierService };
     const url = '/admin/api/2020-10/carrier_services.json';
     const payload = {
-      carrier_service: carrierServicesCreate
+      carrier_service: createCarrierServices
     };
     const { data } = (await this.instance.post<rT>(url, payload)).unwrap();
     if (!data) {
@@ -96,7 +94,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getCarrierService(id: CarrierServiceId): Promise<ResultOK<CarrierService> | ResultFAIL<Error>> {
+  async getCarrierService(id: CarrierServiceId): ReturningResultAsync<CarrierService, Error> {
     type rT = { carrier_service: CarrierService };
     const url = `/admin/api/2020-10/carrier_services/${id}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -107,14 +105,14 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async deleteCarrierService(id: CarrierServiceId): ReturnAsync<null> {
+  async deleteCarrierService(id: CarrierServiceId): ReturningResultAsync<null, Error> {
     const url = `/admin/api/2020-10/carrier_services/${id}.json`;
     (await this.instance.delete(url)).unwrap();
     return ResultOk(null);
   }
 
   @tryCatchWrapperAsync
-  async getScriptTags(): ReturnAsync<ScriptTag[]> {
+  async getScriptTags(): ReturningResultAsync<ScriptTag[], Error> {
     type rT = { script_tags: ScriptTag[] };
     const url = '/admin/api/2020-07/script_tags.json';
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -125,7 +123,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async createScriptTag(scriptTagCreate: CreateScriptTag): ReturnAsync<ScriptTag> {
+  async createScriptTag(scriptTagCreate: CreateScriptTag): ReturningResultAsync<ScriptTag, Error> {
     type rT = { script_tag: ScriptTag };
     const url = '/admin/api/2020-07/script_tags.json';
     const payload = {
@@ -139,7 +137,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getScriptTag(id: ScriptTagId): ReturnAsync<ScriptTag> {
+  async getScriptTag(id: ScriptTagId): ReturningResultAsync<ScriptTag, Error> {
     type rT = { script_tag: ScriptTag };
     const url = `/admin/api/2020-10/script_tags/${id}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -150,14 +148,14 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async deleteScriptTag(id: ScriptTagId): ReturnAsync<null> {
+  async deleteScriptTag(id: ScriptTagId): ReturningResultAsync<null, Error> {
     const url = `/admin/api/2020-10/script_tags/${id}.json`;
     (await this.instance.delete(url)).unwrap();
     return ResultOk(null);
   }
 
   @tryCatchWrapperAsync
-  async getWebHooks(): ReturnAsync<WebHook[]> {
+  async getWebHooks(): ReturningResultAsync<WebHook[], Error> {
     type rT = { webhooks: WebHook[] };
     const url = '/admin/api/2020-10/webhooks.json';
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -168,7 +166,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async createWebHook(webHookCreate: CreateWebHook): ReturnAsync<WebHook> {
+  async createWebHook(webHookCreate: CreateWebHook): ReturningResultAsync<WebHook, Error> {
     type rT = { webhook: WebHook };
     const url = '/admin/api/2020-10/webhooks.json';
     const payload = {
@@ -182,7 +180,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getWebHook(id: WebHookId): ReturnAsync<WebHook> {
+  async getWebHook(id: WebHookId): ReturningResultAsync<WebHook, Error> {
     type rT = { webhook: WebHook };
     const url = `/admin/api/2019-10/webhooks/${id}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -193,14 +191,14 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async deleteWebHook(id: WebHookId): ReturnAsync<null> {
+  async deleteWebHook(id: WebHookId): ReturningResultAsync<null, Error> {
     const url = `/admin/api/2020-10/webhooks/${id}.json`;
     (await this.instance.delete(url)).unwrap();
     return ResultOk(null);
   }
 
   @tryCatchWrapperAsync
-  async getOrders(): ReturnAsync<Order[]> {
+  async getOrders(): ReturningResultAsync<Order[], Error> {
     type rT = { orders: Order[] };
     const url = '/admin/api/2020-10/orders.json';
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -211,7 +209,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getOrder(id: OrderId): ReturnAsync<Order> {
+  async getOrder(id: OrderId): ReturningResultAsync<Order, Error> {
     type rT = { order: Order };
     const url = `/admin/api/2020-10/orders/${id}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -222,7 +220,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async updateOrder(id: OrderId, updateOrder: UpdateOrder): ReturnAsync<null> {
+  async updateOrder(id: OrderId, updateOrder: UpdateOrder): ReturningResultAsync<null, Error> {
     const url = `/admin/api/2020-10/orders/${id}.json`;
     const order = Object.assign({ id }, updateOrder);
     const payload = {
@@ -233,14 +231,14 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async deleteOrder(id: OrderId): ReturnAsync<null> {
+  async deleteOrder(id: OrderId): ReturningResultAsync<null, Error> {
     const url = `/admin/api/2020-10/orders/${id}.json`;
     (await this.instance.delete(url)).unwrap();
     return ResultOk(null);
   }
 
   @tryCatchWrapperAsync
-  async getOrderMetafields(id: OrderId): ReturnAsync<OrderMetafield[]> {
+  async getOrderMetafields(id: OrderId): ReturningResultAsync<OrderMetafield[], Error> {
     type rT = { metafields: OrderMetafield[] };
     const url = `/admin/orders/${id}/metafields.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -251,7 +249,10 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId): ReturnAsync<OrderMetafield> {
+  async getOrderMetafield(
+    orderId: OrderId,
+    metafieldId: OrderMetafieldId
+  ): ReturningResultAsync<OrderMetafield, Error> {
     type rT = { metafield: OrderMetafield };
     const url = `/admin/orders/${orderId}/metafields/${metafieldId}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -266,7 +267,7 @@ export class Shopify {
     orderId: OrderId,
     metafieldId: OrderMetafieldId,
     updateOrderMetafield: UpdateOrderMetafield
-  ): ReturnAsync<OrderMetafield> {
+  ): ReturningResultAsync<OrderMetafield, Error> {
     type rT = { metafield: OrderMetafield };
     const url = `/admin/orders/${orderId}/metafields/${metafieldId}.json`;
     const payload = {
@@ -280,14 +281,14 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async deleteOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId): ReturnAsync<null> {
+  async deleteOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId): ReturningResultAsync<null, Error> {
     const url = `/admin/orders/${orderId}/metafields/${metafieldId}.json`;
     (await this.instance.delete(url)).unwrap();
     return ResultOk(null);
   }
 
   @tryCatchWrapperAsync
-  async createCheckout(checkoutCreate: CreateCheckout): ReturnAsync<Checkout> {
+  async createCheckout(checkoutCreate: CreateCheckout): ReturningResultAsync<Checkout, Error> {
     type rT = { checkout: Checkout };
     const url = '/admin/api/2020-10/checkouts.json';
     const payload = {
@@ -301,7 +302,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getCheckout(checkoutToken: CheckoutToken): ReturnAsync<Checkout> {
+  async getCheckout(checkoutToken: CheckoutToken): ReturningResultAsync<Checkout, Error> {
     type rT = { checkout: Checkout };
     const url = `/admin/api/2020-10/checkouts/${checkoutToken}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -312,7 +313,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getCheckoutShippingRates(checkoutToken: CheckoutToken): ReturnAsync<CheckoutShippingRates[]> {
+  async getCheckoutShippingRates(checkoutToken: CheckoutToken): ReturningResultAsync<CheckoutShippingRates[], Error> {
     type rT = { shipping_rates: CheckoutShippingRates[] };
     const url = `/admin/api/2020-10/checkouts/${checkoutToken}/shipping_rates.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -323,7 +324,10 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async updateCheckout(checkoutToken: CheckoutToken, checkoutUpdate: UpdateCheckout): ReturnAsync<Checkout> {
+  async updateCheckout(
+    checkoutToken: CheckoutToken,
+    checkoutUpdate: UpdateCheckout
+  ): ReturningResultAsync<Checkout, Error> {
     type rT = { checkout: Checkout };
     const url = `/admin/api/2020-10/checkouts/${checkoutToken}.json`;
     const payload = {
@@ -337,7 +341,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async completeCheckout(checkoutToken: CheckoutToken): ReturnAsync<Checkout> {
+  async completeCheckout(checkoutToken: CheckoutToken): ReturningResultAsync<Checkout, Error> {
     type rT = { checkout: Checkout };
     const url = `/admin/api/2020-10/checkouts/${checkoutToken}/complete.json`;
     const { data } = (await this.instance.post<rT>(url)).unwrap();
@@ -351,7 +355,7 @@ export class Shopify {
    * get products
    */
   @tryCatchWrapperAsync
-  async getProducts(): ReturnAsync<Product[]> {
+  async getProducts(): ReturningResultAsync<Product[], Error> {
     type rT = { products: Product[] };
     const url = '/admin/api/2020-10/products.json';
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -365,7 +369,7 @@ export class Shopify {
    * get products count
    */
   @tryCatchWrapperAsync
-  async getProductsCount(): ReturnAsync<number> {
+  async getProductsCount(): ReturningResultAsync<number, Error> {
     type rT = { count: number };
     const url = '/admin/api/2020-10/products/count.json';
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -380,7 +384,7 @@ export class Shopify {
    * @param productId - product id
    */
   @tryCatchWrapperAsync
-  async getProduct(productId: ProductId): ReturnAsync<Product> {
+  async getProduct(productId: ProductId): ReturningResultAsync<Product, Error> {
     type rT = { product: Product };
     const url = `/admin/api/2021-01/products/${productId}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -395,7 +399,7 @@ export class Shopify {
    * @param createProduct - product create object
    */
   @tryCatchWrapperAsync
-  async createProduct(createProduct: CreateProduct): ReturnAsync<Product> {
+  async createProduct(createProduct: CreateProduct): ReturningResultAsync<Product, Error> {
     type rT = { product: Product };
     const url = '/admin/api/2021-01/products.json';
     const payload = { product: createProduct };
@@ -412,7 +416,7 @@ export class Shopify {
    * @param updateProduct - product update object
    */
   @tryCatchWrapperAsync
-  async updateProduct(productId: ProductId, updateProduct: UpdateProduct): ReturnAsync<Product> {
+  async updateProduct(productId: ProductId, updateProduct: UpdateProduct): ReturningResultAsync<Product, Error> {
     type rT = { product: Product };
     const url = `/admin/api/2021-01/products/${productId}.json`;
     const payload = { product: Object.assign({ id: productId }, updateProduct) };
@@ -428,7 +432,7 @@ export class Shopify {
    * @param productId - product id
    */
   @tryCatchWrapperAsync
-  async deleteProduct(productId: ProductId): ReturnAsync<null> {
+  async deleteProduct(productId: ProductId): ReturningResultAsync<null, Error> {
     type rT = Record<string, never>;
     const url = `DELETE /admin/api/2021-01/products/${productId}.json`;
     (await this.instance.delete<rT>(url)).unwrap();
@@ -436,7 +440,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getProductListings(): ReturnAsync<ProductListing[]> {
+  async getProductListings(): ReturningResultAsync<ProductListing[], Error> {
     type rT = { product_listings: ProductListing[] };
     const url = '/admin/api/2021-01/product_listings.json';
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -447,7 +451,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getProductListingIds(): ReturnAsync<ProductId[]> {
+  async getProductListingIds(): ReturningResultAsync<ProductId[], Error> {
     type rT = { product_ids: ProductId[] };
     const url = '/admin/api/2021-01/product_listings/product_ids.json';
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -458,7 +462,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async createProductListing(productId: ProductId): ReturnAsync<ProductListing> {
+  async createProductListing(productId: ProductId): ReturningResultAsync<ProductListing, Error> {
     type rT = { product_listing: ProductListing };
     const url = `/admin/api/2021-01/product_listings/${productId}.json`;
     const payload = {
@@ -474,7 +478,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async getProductListing(productId: ProductId): ReturnAsync<ProductListing> {
+  async getProductListing(productId: ProductId): ReturningResultAsync<ProductListing, Error> {
     type rT = { product_listing: ProductListing };
     const url = `/admin/api/2021-01/product_listings/${productId}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
@@ -485,7 +489,7 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async deleteProductListing(productId: ProductId): ReturnAsync<null> {
+  async deleteProductListing(productId: ProductId): ReturningResultAsync<null, Error> {
     const url = `/admin/api/2021-01/product_listings/${productId}.json`;
     (await this.instance.delete(url)).unwrap();
     return ResultOk(null);
@@ -495,7 +499,7 @@ export class Shopify {
   async createProductVariant(
     productId: ProductId,
     createProductVariant: CreateProductVariant
-  ): ReturnAsync<ProductVariant> {
+  ): ReturningResultAsync<ProductVariant, Error> {
     type rT = { variant: ProductVariant };
     const payload = {
       variant: createProductVariant
@@ -509,7 +513,10 @@ export class Shopify {
   }
 
   @tryCatchWrapperAsync
-  async deleteProductVariant(productId: ProductId, productVariantId: ProductVariantId): ReturnAsync<null> {
+  async deleteProductVariant(
+    productId: ProductId,
+    productVariantId: ProductVariantId
+  ): ReturningResultAsync<null, Error> {
     const url = `/admin/api/2021-01/products/${productId}/variants/${productVariantId}.json`;
     (await this.instance.delete(url)).unwrap();
     return ResultOk(null);
