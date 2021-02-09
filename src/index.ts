@@ -15,7 +15,8 @@ import {
   ProductListing,
   ProductVariantId,
   CreateProductVariant,
-  ProductVariant
+  ProductVariant,
+  CreateProductImage
 } from './types/product';
 
 export class Shopify {
@@ -520,5 +521,21 @@ export class Shopify {
     const url = `/admin/api/2021-01/products/${productId}/variants/${productVariantId}.json`;
     (await this.instance.delete(url)).unwrap();
     return ResultOk(null);
+  }
+
+  async createProductImage(
+    productId: ProductId,
+    productImageCreate: CreateProductImage
+  ): ReturningResultAsync<Product, Error> {
+    type rT = { product: Product };
+    const url = `/admin/api/2021-01/products/${productId}/images.json`;
+    const payload = {
+      image: productImageCreate
+    };
+    const { data } = (await this.instance.post<rT>(url, payload)).unwrap();
+    if (!data) {
+      return ResultFail(new Error('Response without data.'));
+    }
+    return ResultOk(data.product);
   }
 }

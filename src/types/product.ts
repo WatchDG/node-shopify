@@ -63,3 +63,11 @@ export type CreateProductVariant = {
   title?: string;
   price?: string;
 };
+
+export type CreateProductImage = {
+  image: {
+    attachment?: string;
+    filename?: string;
+    src?: string;
+  };
+};
