@@ -18,6 +18,7 @@ import {
   ProductVariant,
   CreateProductImage
 } from './types/product';
+import { Customer, CustomerId, UpdateCustomer } from './types/customer';
 
 export class Shopify {
   private readonly instance: HttpInstance;
@@ -523,6 +524,7 @@ export class Shopify {
     return ResultOk(null);
   }
 
+  @tryCatchWrapperAsync
   async createProductImage(
     productId: ProductId,
     productImageCreate: CreateProductImage
@@ -537,5 +539,19 @@ export class Shopify {
       return ResultFail(new Error('Response without data.'));
     }
     return ResultOk(data.product);
+  }
+
+  @tryCatchWrapperAsync
+  async updateCustomer(customerId: CustomerId, updateCustomer: UpdateCustomer): ReturningResultAsync<Customer, Error> {
+    type rT = { customer: Customer };
+    const url = `/admin/api/2021-01/customers/${customerId}.json`;
+    const payload = {
+      customer: Object.assign({ id: customerId }, updateCustomer)
+    };
+    const { data } = (await this.instance.put<rT>(url, payload)).unwrap();
+    if (!data) {
+      return ResultFail(new Error('Response without data.'));
+    }
+    return ResultOk(data.customer);
   }
 }
