@@ -1,6 +1,6 @@
 {
   "name": "node-shopify",
-  "version": "5.5.0",
+  "version": "5.6.0",
   "description": "module for creating Shopify API calls",
   "keywords": [
     "shopify",
