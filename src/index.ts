@@ -422,7 +422,7 @@ export class Shopify {
     type rT = { product: Product };
     const url = `/admin/api/2021-01/products/${productId}.json`;
     const payload = { product: Object.assign({ id: productId }, updateProduct) };
-    const { data } = (await this.instance.post<rT>(url, payload)).unwrap();
+    const { data } = (await this.instance.put<rT>(url, payload)).unwrap();
     if (!data) {
       return ResultFail(new Error('Response without data.'));
     }
