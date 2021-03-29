@@ -1,5 +1,4 @@
 export type ProductId = number;
-export type ProductVariantId = number;
 export type ProductTitle = string;
 export type ProductVendor = string;
 export type ProductType = string;
@@ -12,8 +11,16 @@ export type ProductPublishedAt = string;
 export type ProductStatus = 'active';
 export type ProductPublishedScope = 'global';
 
+export type ProductVariantId = number;
+export type ProductVariantPrice = string;
+export type ProductVariantBarcode = string;
+export type ProductVariantGrams = number;
 export type ProductVariant = {
   id: ProductVariantId;
+  price: ProductVariantPrice;
+  barcode: ProductVariantBarcode;
+  grams: ProductVariantGrams;
+  product_id: ProductId;
 };
 
 export type Product = {
