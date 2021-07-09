@@ -1,4 +1,4 @@
-import { ResultOk, ResultFail, tryCatchWrapperAsync, ReturningResultAsync } from 'node-result';
+import { ok, fail, tryCatchAsync, TResultAsync } from 'node-result';
 import { HttpInstance } from 'http-instance';
 
 import { CarrierServiceId, CarrierService, CreateCarrierServices } from './types/carrier_service';
@@ -20,6 +20,8 @@ import {
 } from './types/product';
 import { Customer, CustomerId, UpdateCustomer } from './types/customer';
 
+const API_VERSION = '2021-07';
+
 export class Shopify {
   private readonly instance: HttpInstance;
 
@@ -30,12 +32,12 @@ export class Shopify {
     });
   }
 
-  @tryCatchWrapperAsync
+  @tryCatchAsync
   async getApiToken(
     appApiKey: string,
     appSecret: string,
     code: string
-  ): ReturningResultAsync<{ accessToken: string; scope: string[] }, Error> {
+  ): TResultAsync<{ accessToken: string; scope: string[] }, Error> {
     type rT = {
       access_token: string;
       scope: string;
@@ -48,228 +50,223 @@ export class Shopify {
     };
     const { data } = (await this.instance.post<rT>(url, payload)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
     const { access_token, scope } = data;
-    return ResultOk({
+    return ok({
       accessToken: access_token,
       scope: scope.split(',')
     });
   }
 
-  @tryCatchWrapperAsync
-  async getShop(): ReturningResultAsync<Shop, Error> {
+  @tryCatchAsync
+  async getShop(): TResultAsync<Shop, Error> {
     type rT = { shop: Shop };
-    const url = '/admin/api/2020-10/shop.json';
+    const url = `/admin/api/${API_VERSION}/shop.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.shop);
+    return ok(data.shop);
   }
 
-  @tryCatchWrapperAsync
-  async getCarrierServices(): ReturningResultAsync<CarrierService[], Error> {
+  @tryCatchAsync
+  async getCarrierServices(): TResultAsync<CarrierService[], Error> {
     type rT = { carrier_services: CarrierService[] };
-    const url = '/admin/api/2020-10/carrier_services.json';
+    const url = `/admin/api/${API_VERSION}/carrier_services.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.carrier_services);
+    return ok(data.carrier_services);
   }
 
-  @tryCatchWrapperAsync
-  async createCarrierService(
-    createCarrierServices: CreateCarrierServices
-  ): ReturningResultAsync<CarrierService, Error> {
+  @tryCatchAsync
+  async createCarrierService(createCarrierServices: CreateCarrierServices): TResultAsync<CarrierService, Error> {
     type rT = { carrier_service: CarrierService };
-    const url = '/admin/api/2020-10/carrier_services.json';
+    const url = `/admin/api/${API_VERSION}/carrier_services.json`;
     const payload = {
       carrier_service: createCarrierServices
     };
     const { data } = (await this.instance.post<rT>(url, payload)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.carrier_service);
+    return ok(data.carrier_service);
   }
 
-  @tryCatchWrapperAsync
-  async getCarrierService(id: CarrierServiceId): ReturningResultAsync<CarrierService, Error> {
+  @tryCatchAsync
+  async getCarrierService(id: CarrierServiceId): TResultAsync<CarrierService, Error> {
     type rT = { carrier_service: CarrierService };
-    const url = `/admin/api/2020-10/carrier_services/${id}.json`;
+    const url = `/admin/api/${API_VERSION}/carrier_services/${id}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.carrier_service);
+    return ok(data.carrier_service);
   }
 
-  @tryCatchWrapperAsync
-  async deleteCarrierService(id: CarrierServiceId): ReturningResultAsync<null, Error> {
-    const url = `/admin/api/2020-10/carrier_services/${id}.json`;
+  @tryCatchAsync
+  async deleteCarrierService(id: CarrierServiceId): TResultAsync<null, Error> {
+    const url = `/admin/api/${API_VERSION}/carrier_services/${id}.json`;
     (await this.instance.delete(url)).unwrap();
-    return ResultOk(null);
+    return ok(null);
   }
 
-  @tryCatchWrapperAsync
-  async getScriptTags(): ReturningResultAsync<ScriptTag[], Error> {
+  @tryCatchAsync
+  async getScriptTags(): TResultAsync<ScriptTag[], Error> {
     type rT = { script_tags: ScriptTag[] };
-    const url = '/admin/api/2020-07/script_tags.json';
+    const url = `/admin/api/${API_VERSION}/script_tags.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.script_tags);
+    return ok(data.script_tags);
   }
 
-  @tryCatchWrapperAsync
-  async createScriptTag(scriptTagCreate: CreateScriptTag): ReturningResultAsync<ScriptTag, Error> {
+  @tryCatchAsync
+  async createScriptTag(scriptTagCreate: CreateScriptTag): TResultAsync<ScriptTag, Error> {
     type rT = { script_tag: ScriptTag };
-    const url = '/admin/api/2020-07/script_tags.json';
+    const url = `/admin/api/${API_VERSION}/script_tags.json`;
     const payload = {
       script_tag: scriptTagCreate
     };
     const { data } = (await this.instance.post<rT>(url, payload)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.script_tag);
+    return ok(data.script_tag);
   }
 
-  @tryCatchWrapperAsync
-  async getScriptTag(id: ScriptTagId): ReturningResultAsync<ScriptTag, Error> {
+  @tryCatchAsync
+  async getScriptTag(id: ScriptTagId): TResultAsync<ScriptTag, Error> {
     type rT = { script_tag: ScriptTag };
-    const url = `/admin/api/2020-10/script_tags/${id}.json`;
+    const url = `/admin/api/${API_VERSION}/script_tags/${id}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.script_tag);
+    return ok(data.script_tag);
   }
 
-  @tryCatchWrapperAsync
-  async deleteScriptTag(id: ScriptTagId): ReturningResultAsync<null, Error> {
-    const url = `/admin/api/2020-10/script_tags/${id}.json`;
+  @tryCatchAsync
+  async deleteScriptTag(id: ScriptTagId): TResultAsync<null, Error> {
+    const url = `/admin/api/${API_VERSION}/script_tags/${id}.json`;
     (await this.instance.delete(url)).unwrap();
-    return ResultOk(null);
+    return ok(null);
   }
 
-  @tryCatchWrapperAsync
-  async getWebHooks(): ReturningResultAsync<WebHook[], Error> {
+  @tryCatchAsync
+  async getWebHooks(): TResultAsync<WebHook[], Error> {
     type rT = { webhooks: WebHook[] };
-    const url = '/admin/api/2020-10/webhooks.json';
+    const url = `/admin/api/${API_VERSION}/webhooks.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.webhooks);
+    return ok(data.webhooks);
   }
 
-  @tryCatchWrapperAsync
-  async createWebHook(webHookCreate: CreateWebHook): ReturningResultAsync<WebHook, Error> {
+  @tryCatchAsync
+  async createWebHook(webHookCreate: CreateWebHook): TResultAsync<WebHook, Error> {
     type rT = { webhook: WebHook };
-    const url = '/admin/api/2020-10/webhooks.json';
+    const url = `/admin/api/${API_VERSION}/webhooks.json`;
     const payload = {
       webhook: webHookCreate
     };
     const { data } = (await this.instance.post<rT>(url, payload)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.webhook);
+    return ok(data.webhook);
   }
 
-  @tryCatchWrapperAsync
-  async getWebHook(id: WebHookId): ReturningResultAsync<WebHook, Error> {
+  @tryCatchAsync
+  async getWebHook(id: WebHookId): TResultAsync<WebHook, Error> {
     type rT = { webhook: WebHook };
-    const url = `/admin/api/2019-10/webhooks/${id}.json`;
+    const url = `/admin/api/${API_VERSION}/webhooks/${id}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.webhook);
+    return ok(data.webhook);
   }
 
-  @tryCatchWrapperAsync
-  async deleteWebHook(id: WebHookId): ReturningResultAsync<null, Error> {
-    const url = `/admin/api/2020-10/webhooks/${id}.json`;
+  @tryCatchAsync
+  async deleteWebHook(id: WebHookId): TResultAsync<null, Error> {
+    const url = `/admin/api/${API_VERSION}/webhooks/${id}.json`;
     (await this.instance.delete(url)).unwrap();
-    return ResultOk(null);
+    return ok(null);
   }
 
-  @tryCatchWrapperAsync
-  async getOrders(): ReturningResultAsync<Order[], Error> {
+  @tryCatchAsync
+  async getOrders(): TResultAsync<Order[], Error> {
     type rT = { orders: Order[] };
-    const url = '/admin/api/2020-10/orders.json';
+    const url = `/admin/api/${API_VERSION}/orders.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.orders);
+    return ok(data.orders);
   }
 
-  @tryCatchWrapperAsync
-  async getOrder(id: OrderId): ReturningResultAsync<Order, Error> {
+  @tryCatchAsync
+  async getOrder(id: OrderId): TResultAsync<Order, Error> {
     type rT = { order: Order };
-    const url = `/admin/api/2020-10/orders/${id}.json`;
+    const url = `/admin/api/${API_VERSION}/orders/${id}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.order);
+    return ok(data.order);
   }
 
-  @tryCatchWrapperAsync
-  async updateOrder(id: OrderId, updateOrder: UpdateOrder): ReturningResultAsync<null, Error> {
-    const url = `/admin/api/2020-10/orders/${id}.json`;
+  @tryCatchAsync
+  async updateOrder(id: OrderId, updateOrder: UpdateOrder): TResultAsync<null, Error> {
+    const url = `/admin/api/${API_VERSION}/orders/${id}.json`;
     const order = Object.assign({ id }, updateOrder);
     const payload = {
       order
     };
     (await this.instance.put(url, payload)).unwrap();
-    return ResultOk(null);
+    return ok(null);
   }
 
-  @tryCatchWrapperAsync
-  async deleteOrder(id: OrderId): ReturningResultAsync<null, Error> {
-    const url = `/admin/api/2020-10/orders/${id}.json`;
+  @tryCatchAsync
+  async deleteOrder(id: OrderId): TResultAsync<null, Error> {
+    const url = `/admin/api/${API_VERSION}/orders/${id}.json`;
     (await this.instance.delete(url)).unwrap();
-    return ResultOk(null);
+    return ok(null);
   }
 
-  @tryCatchWrapperAsync
-  async getOrderMetafields(id: OrderId): ReturningResultAsync<OrderMetafield[], Error> {
+  @tryCatchAsync
+  async getOrderMetafields(id: OrderId): TResultAsync<OrderMetafield[], Error> {
     type rT = { metafields: OrderMetafield[] };
     const url = `/admin/orders/${id}/metafields.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.metafields);
+    return ok(data.metafields);
   }
 
-  @tryCatchWrapperAsync
-  async getOrderMetafield(
-    orderId: OrderId,
-    metafieldId: OrderMetafieldId
-  ): ReturningResultAsync<OrderMetafield, Error> {
+  @tryCatchAsync
+  async getOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId): TResultAsync<OrderMetafield, Error> {
     type rT = { metafield: OrderMetafield };
     const url = `/admin/orders/${orderId}/metafields/${metafieldId}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.metafield);
+    return ok(data.metafield);
   }
 
-  @tryCatchWrapperAsync
+  @tryCatchAsync
   async updateOrderMetafield(
     orderId: OrderId,
     metafieldId: OrderMetafieldId,
     updateOrderMetafield: UpdateOrderMetafield
-  ): ReturningResultAsync<OrderMetafield, Error> {
+  ): TResultAsync<OrderMetafield, Error> {
     type rT = { metafield: OrderMetafield };
     const url = `/admin/orders/${orderId}/metafields/${metafieldId}.json`;
     const payload = {
@@ -277,196 +274,170 @@ export class Shopify {
     };
     const { data } = (await this.instance.put<rT>(url, payload)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.metafield);
+    return ok(data.metafield);
   }
 
-  @tryCatchWrapperAsync
-  async deleteOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId): ReturningResultAsync<null, Error> {
+  @tryCatchAsync
+  async deleteOrderMetafield(orderId: OrderId, metafieldId: OrderMetafieldId): TResultAsync<null, Error> {
     const url = `/admin/orders/${orderId}/metafields/${metafieldId}.json`;
     (await this.instance.delete(url)).unwrap();
-    return ResultOk(null);
+    return ok(null);
   }
 
-  @tryCatchWrapperAsync
-  async createCheckout(checkoutCreate: CreateCheckout): ReturningResultAsync<Checkout, Error> {
+  @tryCatchAsync
+  async createCheckout(checkoutCreate: CreateCheckout): TResultAsync<Checkout, Error> {
     type rT = { checkout: Checkout };
-    const url = '/admin/api/2020-10/checkouts.json';
+    const url = `/admin/api/${API_VERSION}/checkouts.json`;
     const payload = {
       checkout: checkoutCreate
     };
     const { data } = (await this.instance.post<rT>(url, payload)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.checkout);
+    return ok(data.checkout);
   }
 
-  @tryCatchWrapperAsync
-  async getCheckout(checkoutToken: CheckoutToken): ReturningResultAsync<Checkout, Error> {
+  @tryCatchAsync
+  async getCheckout(checkoutToken: CheckoutToken): TResultAsync<Checkout, Error> {
     type rT = { checkout: Checkout };
-    const url = `/admin/api/2020-10/checkouts/${checkoutToken}.json`;
+    const url = `/admin/api/${API_VERSION}/checkouts/${checkoutToken}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.checkout);
+    return ok(data.checkout);
   }
 
-  @tryCatchWrapperAsync
-  async getCheckoutShippingRates(checkoutToken: CheckoutToken): ReturningResultAsync<CheckoutShippingRates[], Error> {
+  @tryCatchAsync
+  async getCheckoutShippingRates(checkoutToken: CheckoutToken): TResultAsync<CheckoutShippingRates[], Error> {
     type rT = { shipping_rates: CheckoutShippingRates[] };
-    const url = `/admin/api/2020-10/checkouts/${checkoutToken}/shipping_rates.json`;
+    const url = `/admin/api/${API_VERSION}/checkouts/${checkoutToken}/shipping_rates.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.shipping_rates);
+    return ok(data.shipping_rates);
   }
 
-  @tryCatchWrapperAsync
-  async updateCheckout(
-    checkoutToken: CheckoutToken,
-    checkoutUpdate: UpdateCheckout
-  ): ReturningResultAsync<Checkout, Error> {
+  @tryCatchAsync
+  async updateCheckout(checkoutToken: CheckoutToken, checkoutUpdate: UpdateCheckout): TResultAsync<Checkout, Error> {
     type rT = { checkout: Checkout };
-    const url = `/admin/api/2020-10/checkouts/${checkoutToken}.json`;
+    const url = `/admin/api/${API_VERSION}/checkouts/${checkoutToken}.json`;
     const payload = {
       checkout: Object.assign(checkoutUpdate, { token: checkoutToken })
     };
     const { data } = (await this.instance.put<rT>(url, payload)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.checkout);
+    return ok(data.checkout);
   }
 
-  @tryCatchWrapperAsync
-  async completeCheckout(checkoutToken: CheckoutToken): ReturningResultAsync<Checkout, Error> {
+  @tryCatchAsync
+  async completeCheckout(checkoutToken: CheckoutToken): TResultAsync<Checkout, Error> {
     type rT = { checkout: Checkout };
-    const url = `/admin/api/2020-10/checkouts/${checkoutToken}/complete.json`;
+    const url = `/admin/api/${API_VERSION}/checkouts/${checkoutToken}/complete.json`;
     const { data } = (await this.instance.post<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.checkout);
+    return ok(data.checkout);
   }
 
-  /**
-   * get products
-   */
-  @tryCatchWrapperAsync
-  async getProducts(): ReturningResultAsync<Product[], Error> {
+  @tryCatchAsync
+  async getProducts(): TResultAsync<Product[], Error> {
     type rT = { products: Product[] };
-    const url = '/admin/api/2020-10/products.json';
+    const url = `/admin/api/${API_VERSION}/products.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.products);
+    return ok(data.products);
   }
 
-  /**
-   * get products count
-   */
-  @tryCatchWrapperAsync
-  async getProductsCount(): ReturningResultAsync<number, Error> {
+  @tryCatchAsync
+  async getProductsCount(): TResultAsync<number, Error> {
     type rT = { count: number };
-    const url = '/admin/api/2020-10/products/count.json';
+    const url = `/admin/api/${API_VERSION}/products/count.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.count);
+    return ok(data.count);
   }
 
-  /**
-   * get product by product id
-   * @param productId - product id
-   */
-  @tryCatchWrapperAsync
-  async getProduct(productId: ProductId): ReturningResultAsync<Product, Error> {
+  @tryCatchAsync
+  async getProduct(productId: ProductId): TResultAsync<Product, Error> {
     type rT = { product: Product };
-    const url = `/admin/api/2021-01/products/${productId}.json`;
+    const url = `/admin/api/${API_VERSION}/products/${productId}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.product);
+    return ok(data.product);
   }
 
-  /**
-   * create new product
-   * @param createProduct - product create object
-   */
-  @tryCatchWrapperAsync
-  async createProduct(createProduct: CreateProduct): ReturningResultAsync<Product, Error> {
+  @tryCatchAsync
+  async createProduct(createProduct: CreateProduct): TResultAsync<Product, Error> {
     type rT = { product: Product };
-    const url = '/admin/api/2021-01/products.json';
+    const url = `/admin/api/${API_VERSION}/products.json`;
     const payload = { product: createProduct };
     const { data } = (await this.instance.post<rT>(url, payload)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.product);
+    return ok(data.product);
   }
 
-  /**
-   * update product
-   * @param productId - product id
-   * @param updateProduct - product update object
-   */
-  @tryCatchWrapperAsync
-  async updateProduct(productId: ProductId, updateProduct: UpdateProduct): ReturningResultAsync<Product, Error> {
+  @tryCatchAsync
+  async updateProduct(productId: ProductId, updateProduct: UpdateProduct): TResultAsync<Product, Error> {
     type rT = { product: Product };
-    const url = `/admin/api/2021-01/products/${productId}.json`;
+    const url = `/admin/api/${API_VERSION}/products/${productId}.json`;
     const payload = { product: Object.assign({ id: productId }, updateProduct) };
     const { data } = (await this.instance.put<rT>(url, payload)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.product);
+    return ok(data.product);
   }
 
-  /**
-   * delete product by product id
-   * @param productId - product id
-   */
-  @tryCatchWrapperAsync
-  async deleteProduct(productId: ProductId): ReturningResultAsync<null, Error> {
+  @tryCatchAsync
+  async deleteProduct(productId: ProductId): TResultAsync<null, Error> {
     type rT = Record<string, never>;
-    const url = `DELETE /admin/api/2021-01/products/${productId}.json`;
+    const url = `/admin/api/${API_VERSION}/products/${productId}.json`;
     (await this.instance.delete<rT>(url)).unwrap();
-    return ResultOk(null);
+    return ok(null);
   }
 
-  @tryCatchWrapperAsync
-  async getProductListings(): ReturningResultAsync<ProductListing[], Error> {
+  @tryCatchAsync
+  async getProductListings(): TResultAsync<ProductListing[], Error> {
     type rT = { product_listings: ProductListing[] };
-    const url = '/admin/api/2021-01/product_listings.json';
+    const url = `/admin/api/${API_VERSION}/product_listings.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.product_listings);
+    return ok(data.product_listings);
   }
 
-  @tryCatchWrapperAsync
-  async getProductListingIds(): ReturningResultAsync<ProductId[], Error> {
+  @tryCatchAsync
+  async getProductListingIds(): TResultAsync<ProductId[], Error> {
     type rT = { product_ids: ProductId[] };
-    const url = '/admin/api/2021-01/product_listings/product_ids.json';
+    const url = `/admin/api/${API_VERSION}/product_listings/product_ids.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.product_ids);
+    return ok(data.product_ids);
   }
 
-  @tryCatchWrapperAsync
-  async createProductListing(productId: ProductId): ReturningResultAsync<ProductListing, Error> {
+  @tryCatchAsync
+  async createProductListing(productId: ProductId): TResultAsync<ProductListing, Error> {
     type rT = { product_listing: ProductListing };
-    const url = `/admin/api/2021-01/product_listings/${productId}.json`;
+    const url = `/admin/api/${API_VERSION}/product_listings/${productId}.json`;
     const payload = {
       product_listing: {
         product_id: productId
@@ -474,84 +445,78 @@ export class Shopify {
     };
     const { data } = (await this.instance.put<rT>(url, payload)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.product_listing);
+    return ok(data.product_listing);
   }
 
-  @tryCatchWrapperAsync
-  async getProductListing(productId: ProductId): ReturningResultAsync<ProductListing, Error> {
+  @tryCatchAsync
+  async getProductListing(productId: ProductId): TResultAsync<ProductListing, Error> {
     type rT = { product_listing: ProductListing };
-    const url = `/admin/api/2021-01/product_listings/${productId}.json`;
+    const url = `/admin/api/${API_VERSION}/product_listings/${productId}.json`;
     const { data } = (await this.instance.get<rT>(url)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.product_listing);
+    return ok(data.product_listing);
   }
 
-  @tryCatchWrapperAsync
-  async deleteProductListing(productId: ProductId): ReturningResultAsync<null, Error> {
-    const url = `/admin/api/2021-01/product_listings/${productId}.json`;
+  @tryCatchAsync
+  async deleteProductListing(productId: ProductId): TResultAsync<null, Error> {
+    const url = `/admin/api/${API_VERSION}/product_listings/${productId}.json`;
     (await this.instance.delete(url)).unwrap();
-    return ResultOk(null);
+    return ok(null);
   }
 
-  @tryCatchWrapperAsync
+  @tryCatchAsync
   async createProductVariant(
     productId: ProductId,
     createProductVariant: CreateProductVariant
-  ): ReturningResultAsync<ProductVariant, Error> {
+  ): TResultAsync<ProductVariant, Error> {
     type rT = { variant: ProductVariant };
     const payload = {
       variant: createProductVariant
     };
-    const url = `/admin/api/2021-01/products/${productId}/variants.json`;
+    const url = `/admin/api/${API_VERSION}/products/${productId}/variants.json`;
     const { data } = (await this.instance.post<rT>(url, payload)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.variant);
+    return ok(data.variant);
   }
 
-  @tryCatchWrapperAsync
-  async deleteProductVariant(
-    productId: ProductId,
-    productVariantId: ProductVariantId
-  ): ReturningResultAsync<null, Error> {
-    const url = `/admin/api/2021-01/products/${productId}/variants/${productVariantId}.json`;
+  @tryCatchAsync
+  async deleteProductVariant(productId: ProductId, productVariantId: ProductVariantId): TResultAsync<null, Error> {
+    const url = `/admin/api/${API_VERSION}/products/${productId}/variants/${productVariantId}.json`;
     (await this.instance.delete(url)).unwrap();
-    return ResultOk(null);
+    return ok(null);
   }
 
-  @tryCatchWrapperAsync
-  async createProductImage(
-    productId: ProductId,
-    productImageCreate: CreateProductImage
-  ): ReturningResultAsync<Product, Error> {
+  @tryCatchAsync
+  async createProductImage(productId: ProductId, productImageCreate: CreateProductImage): TResultAsync<Product, Error> {
     type rT = { product: Product };
-    const url = `/admin/api/2021-01/products/${productId}/images.json`;
+    const url = `/admin/api/${API_VERSION}/products/${productId}/images.json`;
     const payload = {
       image: productImageCreate
     };
     const { data } = (await this.instance.post<rT>(url, payload)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.product);
+    return ok(data.product);
   }
 
-  @tryCatchWrapperAsync
-  async updateCustomer(customerId: CustomerId, updateCustomer: UpdateCustomer): ReturningResultAsync<Customer, Error> {
+  @tryCatchAsync
+  async updateCustomer(customerId: CustomerId, updateCustomer: UpdateCustomer): TResultAsync<Customer, Error> {
     type rT = { customer: Customer };
-    const url = `/admin/api/2021-01/customers/${customerId}.json`;
+    const url = `/admin/api/${API_VERSION}/customers/${customerId}.json`;
     const payload = {
       customer: Object.assign({ id: customerId }, updateCustomer)
     };
     const { data } = (await this.instance.put<rT>(url, payload)).unwrap();
     if (!data) {
-      return ResultFail(new Error('Response without data.'));
+      return fail(new Error('Response without data.'));
     }
-    return ResultOk(data.customer);
+    return ok(data.customer);
   }
 }

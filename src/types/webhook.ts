@@ -6,12 +6,13 @@ export type WebHookTopic =
   | 'orders/paid'
   | 'orders/partially_fulfilled'
   | 'orders/updated'
-  | 'orders/delete';
+  | 'orders/delete'
+  | string;
 export type WebHookAddress = string;
 export type WebHookFormat = 'json' | 'xml';
 export type WebHookCreatedAt = string;
 export type WebHookUpdatedAt = string;
-export type WebHookApiVersion = '2021-01';
+export type WebHookApiVersion = '2021-01' | '2021-07' | string;
 
 export type WebHook = {
   id: WebHookId;
